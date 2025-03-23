@@ -1,0 +1,182 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct SubsectionNode {
+    string name;
+    SubsectionNode* next;
+};
+
+struct SectionNode {
+    string name;
+    SectionNode* next;
+    SubsectionNode* subsections;
+};
+
+struct ChapterNode {
+    string name;
+    ChapterNode* next;
+    SectionNode* sections;
+};
+
+ChapterNode* head = NULL;
+
+void addChapter(string chapterName) {
+    ChapterNode* newChapter = new ChapterNode{chapterName, NULL, NULL};
+    if (!head) head = newChapter;
+    else {
+        ChapterNode* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->next = newChapter;
+    }
+    cout << "Chapter added successfully!\n";
+}
+
+ChapterNode* findChapter(string chapterName) {
+    ChapterNode* temp = head;
+    while (temp) {
+        if (temp->name == chapterName) return temp;
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+void addSection(string chapterName, string sectionName) {
+    ChapterNode* chapter = findChapter(chapterName);
+    if (!chapter) {
+        cout << "Error: Chapter not found!\n";
+        return;
+    }
+    SectionNode* newSection = new SectionNode{sectionName, chapter->sections, NULL};
+    chapter->sections = newSection;
+    cout << "Section added successfully!\n";
+}
+
+SectionNode* findSection(ChapterNode* chapter, string sectionName) {
+    SectionNode* temp = chapter->sections;
+    while (temp) {
+        if (temp->name == sectionName) return temp;
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+void addSubsection(string chapterName, string sectionName, string subsectionName) {
+    ChapterNode* chapter = findChapter(chapterName);
+    if (!chapter) {
+        cout << "Error: Chapter not found!\n";
+        return;
+    }
+    SectionNode* section = findSection(chapter, sectionName);
+    if (!section) {
+        cout << "Error: Section not found!\n";
+        return;
+    }
+    SubsectionNode* newSubsection = new SubsectionNode{subsectionName, section->subsections};
+    section->subsections = newSubsection;
+    cout << "Subsection added successfully!\n";
+}
+
+void displayChapters() {
+    if (!head) {
+        cout << "No chapters available.\n";
+        return;
+    }
+    ChapterNode* temp = head;
+    cout << "Available Chapters:\n";
+    while (temp) {
+        cout << "  - " << temp->name << endl;
+        temp = temp->next;
+    }
+}
+
+void displayChaptersAndSections() {
+    if (!head) {
+        cout << "No chapters available.\n";
+        return;
+    }
+    ChapterNode* chapter = head;
+    cout << "Available Chapters and Sections:\n";
+    while (chapter) {
+        cout << "Chapter: " << chapter->name << endl;
+        SectionNode* section = chapter->sections;
+        while (section) {
+            cout << "  - Section: " << section->name << endl;
+            section = section->next;
+        }
+        chapter = chapter->next;
+    }
+}
+
+void display() {
+    if (!head) {
+        cout << "No chapters added yet.\n";
+        return;
+    }
+    ChapterNode* chapter = head;
+    while (chapter) {
+        cout << "Chapter: " << chapter->name << endl;
+        SectionNode* section = chapter->sections;
+        while (section) {
+            cout << "  Section: " << section->name << endl;
+            SubsectionNode* subsection = section->subsections;
+            while (subsection) {
+                cout << "    Subsection: " << subsection->name << endl;
+                subsection = subsection->next;
+            }
+            section = section->next;
+        }
+        chapter = chapter->next;
+    }
+}
+
+int main() {
+    int choice;
+    string chapterName, sectionName, subsectionName;
+
+    while (true) {
+        cout << "\nMenu:\n";
+        cout << "1. Add Chapter\n";
+        cout << "2. Add Section\n";
+        cout << "3. Add Subsection\n";
+        cout << "4. Display\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter chapter name: ";
+                getline(cin, chapterName);
+                addChapter(chapterName);
+                break;
+            case 2:
+                displayChapters();
+                cout << "Enter chapter name: ";
+                getline(cin, chapterName);
+                cout << "Enter section name: ";
+                getline(cin, sectionName);
+                addSection(chapterName, sectionName);
+                break;
+            case 3:
+                displayChaptersAndSections();
+                cout << "Enter chapter name: ";
+                getline(cin, chapterName);
+                cout << "Enter section name: ";
+                getline(cin, sectionName);
+                cout << "Enter subsection name: ";
+                getline(cin, subsectionName);
+                addSubsection(chapterName, sectionName, subsectionName);
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                return 0;
+            default:
+                cout << "Invalid choice!\n";
+        }
+    }
+}
