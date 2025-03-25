@@ -3,7 +3,7 @@
 using namespace std;
 
 void accept(vector<int>& arr) {
-    cout << "Enter elements: ";
+    cout << "Enter elements: "  ;
     int val;
     char choice = 'y';
     while (choice == 'y' || choice == 'Y') {
