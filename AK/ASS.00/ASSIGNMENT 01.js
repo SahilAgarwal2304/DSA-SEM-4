@@ -3,7 +3,7 @@ cp = parseFloat(cp);
 
 if (isNaN(cp)) {
     console.log("Invalid input. Cost Price must be a valid number.");
-} else if (cp < 0) {
+} else if (cp  <  0) {
     console.log("Cost Price cannot be negative.");
 } else {
     var sp = prompt("Enter Selling Price:");
