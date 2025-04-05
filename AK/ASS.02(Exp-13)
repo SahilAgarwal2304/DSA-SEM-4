@@ -1,1 +1,112 @@
 
+#include <iostream>
+#include <queue>
+#include <list>
+#include <stdexcept>
+using namespace std;
+#define MAX_NODES 10
+string nodes[MAX_NODES];
+list<int> graph[MAX_NODES];
+void addEdge(int u, int v) {
+graph[u].push_back(v);
+graph[v].push_back(u);
+}
+void dfs(int node, bool visited[]) {
+visited[node] = true;
+cout << nodes[node] << " ";
+for (int adj : graph[node]) {
+if (!visited[adj]) {
+dfs(adj, visited);
+}
+}
+}
+void bfs(int start) {
+bool visited[MAX_NODES] = {false};
+queue<int> q;
+visited[start] = true;
+q.push(start);
+cout << "BFS traversal starting from " << nodes[start] << ": ";
+while (!q.empty()) {
+int node = q.front();
+q.pop();
+cout << nodes[node] << " ";
+for (int adj : graph[node]) {
+if (!visited[adj]) {
+visited[adj] = true;
+q.push(adj);
+}
+}
+}
+cout << endl;
+}
+void menu() {
+int numNodes, numEdges;
+try {
+cout << "Enter the number of nodes (max " << MAX_NODES << "): ";
+cin >> numNodes;
+if (cin.fail()) throw invalid_argument("Invalid number of nodes. Please enter a valid integer.");
+if (numNodes > MAX_NODES) throw out_of_range("Maximum nodes allowed is " + to_string(MAX_NODES) + ". Program will exit.");
+cin.ignore(); // Clear the input buffer
+cout << "Enter the names of the landmarks (nodes):\n";
+for (int i = 0; i < numNodes; ++i) {
+cout << "Enter name for node " << i + 1 << ": ";
+getline(cin, nodes[i]);
+}
+cout << "Enter the number of edges: ";
+cin >> numEdges;
+if (cin.fail()) throw invalid_argument("Invalid number of edges. Please enter a valid integer.");
+cin.ignore(); // Clear the input buffer
+for (int i = 0; i < numEdges; ++i) {
+int u, v;
+cout << "Enter edge " << i + 1 << " (two space-separated node indices): ";
+cin >> u >> v;
+if (cin.fail()) throw invalid_argument("Invalid node indices. Please enter valid integers.");
+u--; v--; // Decrement to match 0-based index
+if (u < 0 || u >= numNodes || v < 0 || v >= numNodes) {
+throw out_of_range("Node indices must be between 1 and " + to_string(numNodes) + ".");
+}
+addEdge(u, v);
+}
+bool visitedDFS[MAX_NODES] = {false};
+while (true) {
+int choice;
+cout << "\nSelect an option:\n";
+cout << "1. Perform DFS traversal\n";
+cout << "2. Perform BFS traversal\n";
+cout << "3. Exit\n";
+cout << "Enter your choice: ";
+cin >> choice;
+if (cin.fail()) throw invalid_argument("Invalid choice. Please enter a valid integer.");
+switch (choice) {
+case 1:
+cout << "DFS traversal starting from " << nodes[0] << ": ";
+dfs(0, visitedDFS);
+cout << endl;
+break;
+case 2:
+bfs(0);
+break;
+case 3:
+cout << "Exiting program.\n";
+return;
+default:
+cout << "Invalid choice. Please try again.\n";
+}} }
+catch (const invalid_argument& e) {
+cout << "Error: " << e.what() << endl;
+}
+catch (const out_of_range& e) {
+cout << "Error: " << e.what() << endl;
+}
+catch (const exception& e) {
+cout << "An unexpected error occurred: " << e.what() << endl;
+}}
+int main() {
+try {
+menu();
+}
+catch (const exception& e) {
+cout << "Program encountered a fatal error: " << e.what() << endl;
+}
+return 0;
+}
